@@ -13,4 +13,6 @@ SKILLS = {
     "rest api": ["rest api", "restful", "api"],
     "git": ["git", "github", "gitlab"],
     "docker": ["docker", "containers", "containerization"],
+    "aws": ["aws", "amazon web services"],
+    "azure": ["azure", "microsoft azure"],
 }

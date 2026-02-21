@@ -66,3 +66,42 @@ def compute_score(
         score += 10 * len(core & resume_skills)  # 0, 10, or 20
 
     return int(round(min(max(score, 0), 100)))
+from collections import Counter
+
+STOPWORDS = {
+    "the", "a", "an", "and", "or", "to", "of", "in", "for", "with",
+    "on", "as", "is", "are", "was", "were", "be", "been", "being",
+    "by", "at", "from", "that", "this", "it", "you", "we", "they",
+    "their", "our", "your", "will", "can", "may", "should", "must",
+    "not", "but", "if", "into", "over", "within", "across", "also"
+}
+
+
+def tokenize(text: str):
+    words = re.findall(r"[a-zA-Z0-9+/]+", text.lower())
+    return [w for w in words if w not in STOPWORDS and len(w) > 2]
+
+
+def extract_keywords(text: str, top_k: int = 12):
+    tokens = tokenize(text)
+    freq = Counter(tokens)
+
+    if not freq:
+        return []
+
+    scored = []
+    for term, count in freq.items():
+        # Simple weighting: frequency * small length factor
+        length_factor = 1 + min(len(term), 10) / 10
+        score = count * length_factor
+        scored.append((term, score))
+
+    scored.sort(key=lambda x: x[1], reverse=True)
+
+    max_score = scored[0][1]
+    normalized = [
+        {"term": t, "weight": round(s / max_score, 3)}
+        for t, s in scored[:top_k]
+    ]
+
+    return normalized
