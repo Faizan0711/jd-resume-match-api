@@ -1,7 +1,8 @@
 from fastapi import FastAPI
 from app.schemas import AnalyzeRequest, AnalyzeResponse
+from app.services.matcher import compare_skills
 
-app = FastAPI(title="JD-Resume Match Analyzer API", version="0.1.0")
+app = FastAPI(title="JD-Resume Match Analyzer API", version="0.2.0")
 
 
 @app.get("/health")
@@ -11,14 +12,15 @@ def health():
 
 @app.post("/analyze", response_model=AnalyzeResponse)
 def analyze(payload: AnalyzeRequest):
-    # Step 1 stub: returns a predictable placeholder response
-    # In Step 2, we'll replace this with real matching logic.
+    matched, missing = compare_skills(payload.job_description, payload.resume_text)
+
     return AnalyzeResponse(
-        match_score=50,
-        matched_skills=[],
-        missing_skills=[],
-        top_keywords=[],
+        match_score=0,  # Step 3: scoring
+        matched_skills=matched,
+        missing_skills=missing,
+        top_keywords=[],  # Step 4
         recommendations=[
-            "Step 1 is running. Next we’ll implement skill extraction + scoring."
+            "Step 2 done: skill extraction + comparison works.",
+            "Next: implement scoring (0–100) and keyword weighting."
         ],
     )
